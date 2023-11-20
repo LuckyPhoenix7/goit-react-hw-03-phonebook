@@ -3,7 +3,7 @@ import { ContactList } from './ContactList/ContactList';
 import { ContactForm } from './ContactForm/ContactForm';
 import { nanoid } from 'nanoid';
 import { Filter } from './Filter/Filter';
-import { Container, FirstTitle, SecondTitle } from './App.styled';
+import { Layout, FirstTitle, SecondTitle } from './Layout';
 
 export class App extends Component {
   state = {
@@ -15,6 +15,20 @@ export class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem('contacts');
+
+    if (savedContacts !== null) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   addContact = newContact => {
     if (this.state.contacts.some(({ name }) => name === newContact.name)) {
@@ -46,7 +60,7 @@ export class App extends Component {
     );
 
     return (
-      <Container>
+      <Layout>
         <FirstTitle>Phonebook</FirstTitle>
         <ContactForm addContact={this.addContact} />
 
@@ -57,7 +71,7 @@ export class App extends Component {
           contactsBook={visibleContact}
           onDelete={this.deleteContact}
         />
-      </Container>
+      </Layout>
     );
   }
 }
